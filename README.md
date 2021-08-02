@@ -6,6 +6,8 @@ Dữ liệu training/testing có tỉ lệ 7992/2224 câu văn.
 
 Số lượng nhãn gender/department là 7000/12000.
 
+![plot]('./plot.png)
+
 ## Mô hình 
 
 Dùng 2 layer của phobert + 1 layer LSTM làm backbone.
@@ -40,3 +42,4 @@ print(a)
 >>>[['male', ' ông'], ('O', 'muốn'), ('O', 'bỏ'), ('O', 'lịch'), ('O', 'lúc'), ('O', '14'), ('O', 'h'), ('O', ','), ['female', ' cô'], ('O', 'muốn'), ('O', 'thay'), ['male', ' chồng'], ('O', 'gặp'), ('female', 'chị_gái'), ('O', ','), ('male', 'anh_trai'), ('O', 'lúc'), ('O', '16'), ('O', 'h')]
 
 ```
+
