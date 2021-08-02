@@ -122,6 +122,7 @@ class DepartmentMatcher(object):
                 r'\bnội soi\b',
                 r'\bngoại tổng hợp\b',
                 r'\bkhoa gây mê hồi sức\b',
+                r'\bkhoa cấp_cứu\b'
             ]
         }
     def iter_pattern(self):

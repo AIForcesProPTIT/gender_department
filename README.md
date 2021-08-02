@@ -19,9 +19,12 @@ F1-SCORE: GENDER = 0.9
 ## Predict 
 
 ```python3
-
+import torch
 from model.model import BertCRF
 model = BertCRF(n_layer_bert=2)
-text = 'chị gái của nguyễn văn nam xin thông tin khám bệnh ở khoa cấp cứu phía miền nam'
-predict, sentence=model.predict(text,device='cpu')
-print(list(zip(sentence,predict)))
+model.load_state_dict(torch.load("/home/tuenguyen/Desktop/24mar2021/task_nlp/join_task_gender_department/checkpoints/vner_model.bin"))
+text = 'cho anh nguyễn   văn nam ~  xin thông tin khám bệnh ở khoa cấp cứu cơ sở miền nam'
+a=model.predict(text,device='cpu')
+print(a)
+>>>[('O', 'cho'), ['GENDER', ' anh'], ('O', 'nguyễn_văn'), ('O', 'nam'), ('O', '~'), ('O', 'xin'), ('O', 'thông_tin'), ('O', 'khám'), ('O', 'bệnh'), ('O', 'ở'), ['O', ' khoa cấp_cứu_cơ_sở miền nam']]
+```

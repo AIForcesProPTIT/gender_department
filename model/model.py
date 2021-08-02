@@ -26,6 +26,7 @@ from transformers import AutoModel, AutoTokenizer
 from model.layer.crf import CRF
 from model.layer.utils import get_extended_attention_mask
 from underthesea import word_tokenize
+from preprocess.matcher_lib import GenderMatcher, DepartmentMatcher
 # text=word_tokenize(text, format="text")
 class BertCRF(nn.Module):
     def __init__(self, n_layer_bert = -1, cfg_feat=None, pretrained_bert='vinai/phobert-base'):
@@ -38,6 +39,8 @@ class BertCRF(nn.Module):
         self.word_net  = FeatureRep(self.feats)
         path = Path(__file__).parent.absolute()
         path = Path(path).parent.absolute()
+        self.gender = GenderMatcher()
+        self.department = DepartmentMatcher()
         self.fe = FeatureExtractor(dict_dir=os.path.join(path,'resources/features'))
         
         b = AutoModel.from_pretrained(pretrained_bert).to("cpu")
@@ -110,8 +113,39 @@ class BertCRF(nn.Module):
         self.eval()
         with torch.no_grad():
             out = self(token_id_tensors[None,...], attention_mask_tensors[None,...], feat_tensors)
-            out1 = self.crf.decode(out)[0]
-        return [self.processor.labels[max(i-1,0)] for i in out1[features[0].token_mask==1]] #out1[features[0].token_mask==1],sentence
+            out1 = torch.LongTensor(self.crf.decode(out)[0])
+        # print(out1, features[0].token_masks, out1[torch.LongTensor(features[0].token_masks)==1] )
+     
+        return self.regrex_remove_post(
+            sentence.split(),
+            [self.processor.labels[max(i-1,0)] for i in out1[torch.LongTensor(features[0].token_masks)==1]]
+
+        )
+    def regrex_remove_post(self, sentence, entities):
+        entities_final = []
+        step = 0
+        while step < len(sentence):
+            if entities[step] == 'O':
+                entities_final.append((entities[step],sentence[step]))
+                step += 1
+            elif 'B' in entities[step]:
+                a = entities[step].split("-")[1]
+                entities_final.append([a, ""])
+                while step < len(sentence) and "-" in entities[step] and entities[step].split("-")[1] == a:
+                    entities_final[-1][1] = entities_final[-1][1] + " " + sentence[step]
+                    step += 1
+                if 'GENDER' in a:
+                    refine = self.gender.match(entities_final[-1][1])
+                else:
+                    refine = self.department.match(entities_final[-1][1])
+                if len(refine['entities']) == 0:
+                    entities_final[-1][0] = 'O'
+                
+        return entities_final
+
+
+
+
 class Model(nn.Module):
     def __init__(self, args):
         super().__init__()
