@@ -15,11 +15,23 @@ class GenderMatcher(object):
                 self.dict_matcher  = json.load(f)
         self.template = {
             'male':['con trai','nam','nam giới','đàn ông','chú','ông','bố','bô'\
-                    'cậu','anh','chồng','anh rể','dượng','ba','bác trai','tía'],
-            'female':['con gái','trai','nữ','nữ giới','phụ nữ','cô','bà','mẹ','gì','thím','chị','vợ',\
-                     'má','chị dâu','bác gái'],
+                    'cậu','anh','chồng','anh rể','dượng','ba','bác trai','tía','anh trai',],
+            'female':['con gái','nữ','nữ giới','phụ nữ','cô','bà','mẹ','gì','thím','chị','vợ',\
+                     'má','chị dâu','bác gái','chị gái'],
         }
-
+        self.template_aw = {
+            'male':['con trai','nam giới','đàn ông','chú','ông','bố','bô'\
+                    'cậu','anh','chồng','anh rể','dượng','ba','bác trai','tía','anh trai',],
+            'female':['con gái','nữ','nữ giới','phụ nữ','cô','bà','mẹ','gì','thím','chị','vợ',\
+                     'má','chị dâu','bác gái','chị gái'],
+        }
+    def alway_match(self,text):
+        for val in self.template_aw:
+            for t in self.template_aw[val]:
+                if text == t:return val
+                
+        return None
+    # def iter_pattern(self)
     def iter_pattern(self):
         for k in self.template:
             for i in self.template[k]:
@@ -122,14 +134,17 @@ class DepartmentMatcher(object):
                 r'\bnội soi\b',
                 r'\bngoại tổng hợp\b',
                 r'\bkhoa gây mê hồi sức\b',
-                r'\bkhoa cấp_cứu\b'
+                r'\bkhoa cấp_cứu\b',
+                r'\bkhoa cơ xương khớp\b',
+                r'\bkhoa xương khớp\b'
             ]
         }
     def iter_pattern(self):
         for k in self.template:
             for i in self.template[k]:
                 yield (unicodedata.normalize("NFC",i),k)
-
+    def alway_match(self,text):
+        return None
     def nms(self, entities):
         matches = entities['entities']
         matches_nsm=sorted(matches,key=lambda x:(x['start'],-x['end']))

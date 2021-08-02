@@ -126,7 +126,15 @@ class BertCRF(nn.Module):
         step = 0
         while step < len(sentence):
             if entities[step] == 'O':
-                entities_final.append((entities[step],sentence[step]))
+                a=self.gender.alway_match(sentence[step].replace("_"," "))
+                if a is not None:
+                    entities_final.append((a,sentence[step]))
+                else:
+                    b=self.department.alway_match(sentence[step].replace("_"," "))
+                    if b is not None:
+                         entities_final.append((b,sentence[step]))
+                    else:
+                        entities_final.append((entities[step],sentence[step]))
                 step += 1
             elif 'B' in entities[step]:
                 a = entities[step].split("-")[1]
@@ -134,12 +142,16 @@ class BertCRF(nn.Module):
                 while step < len(sentence) and "-" in entities[step] and entities[step].split("-")[1] == a:
                     entities_final[-1][1] = entities_final[-1][1] + " " + sentence[step]
                     step += 1
+                print(entities_final[-1][1].replace("_"," "))
                 if 'GENDER' in a:
-                    refine = self.gender.match(entities_final[-1][1])
+                    refine = self.gender.match(entities_final[-1][1].replace("_"," "))
                 else:
-                    refine = self.department.match(entities_final[-1][1])
+                    refine = self.department.match(entities_final[-1][1].replace("_"," "))
                 if len(refine['entities']) == 0:
                     entities_final[-1][0] = 'O'
+                else:
+                    entities_final[-1][0] = refine['entities'][0]['value']
+                
                 
         return entities_final
 
