@@ -15,7 +15,10 @@ Top layer là linear + CRF làm head.
 
 ## Kết quả 
 
-F1-SCORE: GENDER = 0.9
+F1-SCORE:
+
+GENDER = 0.93
+DEPARTMENT: 0.89
 
 ## Predict 
 
