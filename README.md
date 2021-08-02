@@ -6,8 +6,7 @@ Dữ liệu training/testing có tỉ lệ 7992/2224 câu văn.
 
 Số lượng nhãn gender/department là 7000/12000.
 
-[plot]('plot.png)
-
+![alt text](https://github.com/AIForcesProPTIT/gender_department/blob/main/plot.png?raw=true)
 ## Mô hình 
 
 Dùng 2 layer của phobert + 1 layer LSTM làm backbone.
