@@ -6,7 +6,7 @@ Dữ liệu training/testing có tỉ lệ 7992/2224 câu văn.
 
 Số lượng nhãn gender/department là 7000/12000.
 
-[plot]('./plot.png)
+[plot]('plot.png)
 
 ## Mô hình 
 
